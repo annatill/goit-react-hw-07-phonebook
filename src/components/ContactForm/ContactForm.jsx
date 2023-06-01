@@ -10,8 +10,8 @@ import {
 } from './ContactForm.styled.jsx';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/contactsSlice.js';
-import { getContacts } from 'redux/contactsSlice.js';
+import { addContact } from 'redux/operations.js';
+import { getContacts } from 'redux/selectors.js';
 
 const FormError = ({ message }) => {
   return <Message>{message}</Message>;
@@ -19,9 +19,9 @@ const FormError = ({ message }) => {
 
 export const ContactForm = () => {
   const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+  const [phone, setPhone] = useState('');
   const [nameError, setNameError] = useState(null);
-  const [numberError, setNumberError] = useState(null);
+  const [phoneError, setPhoneError] = useState(null);
 
   const nameInputId = nanoid();
   const telInputId = nanoid();
@@ -38,9 +38,9 @@ export const ContactForm = () => {
         setNameError(null);
         break;
 
-      case 'number':
-        setNumber(value);
-        setNumberError(null);
+      case 'phone':
+        setPhone(value);
+        setPhoneError(null);
         break;
 
       default:
@@ -51,7 +51,7 @@ export const ContactForm = () => {
   const handleSubmit = event => {
     event.preventDefault();
 
-    if (!name || !number) {
+    if (!name || !phone) {
       setNameError('Please fill in all fields');
       return;
     }
@@ -62,9 +62,9 @@ export const ContactForm = () => {
       return;
     }
 
-    const isValidNumber = /^[0-9\s-]+$/;
-    if (!isValidNumber.test(number)) {
-      setNumberError('Please enter a valid number');
+    const isValidPhone = /^[0-9\s-]+$/;
+    if (!isValidPhone.test(phone)) {
+      setPhoneError('Please enter a valid phone number');
       return;
     }
 
@@ -74,14 +74,14 @@ export const ContactForm = () => {
       return;
     }
 
-    dispatch(addContact(name, number));
+    dispatch(addContact({ name, phone }));
     reset();
     submitButton.current.focus();
   };
 
   const reset = () => {
     setName('');
-    setNumber('');
+    setPhone('');
   };
 
   const isContactExist = name => {
@@ -114,14 +114,14 @@ export const ContactForm = () => {
           <Input
             className="input"
             type="tel"
-            name="number"
+            name="phone"
             placeholder="Enter phone number"
             id={telInputId}
-            value={number}
+            value={phone}
             onChange={handleChange}
           />
         </Label>
-        <>{numberError && <FormError name="number" message={numberError} />}</>
+        <>{phoneError && <FormError name="phone" message={phoneError} />}</>
       </ContainerInput>
       <Button type="submit" ref={submitButton}>
         Add contact
